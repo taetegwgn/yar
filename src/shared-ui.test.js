@@ -75,8 +75,16 @@ test('two independent screens share additions; only the host can clear; personal
   await until(() => guest.$('#node-count').textContent === '1개의 생각');
   await until(() => host.$('#node-count').textContent === '1개의 생각');
   assert.equal(host.$('#graph .node text').textContent, '함께 남긴 생각');
+  assert.equal(host.$('#graph .node').classList.contains('recent'), true);
   assert.equal(host.$('#node-list .list-dot').style.background, 'rgb(20, 125, 255)');
   assert.equal(host.$('#graph .node').style.getPropertyValue('--node-color'), '#147dff');
+  guest.$('#member-list .member-item:last-child').click();
+  assert.equal(guest.$('#thoughts-panel').hidden, false);
+  assert.equal(guest.$('#node-filter').hidden, false);
+  assert.equal(guest.$('#node-filter-label').textContent, '참여자 님의 생각');
+  assert.equal(guest.$('#node-list').children.length, 1);
+  guest.$('#clear-node-filter').click();
+  assert.equal(guest.$('#node-filter').hidden, true);
   host.$('#graph .node').dispatchEvent(new host.w.MouseEvent('click', { bubbles: true }));
   assert.equal(host.$('.author-chip').textContent.trim(), '참여자');
   assert.equal(host.$('#clear').hidden, false);

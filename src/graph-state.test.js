@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { addThought, ensureConnected, restoreGraph } from './graph-state.js';
+import { addThought, ensureConnected, recentNodeIds, restoreGraph } from './graph-state.js';
 
 test('adding a thought without an API key keeps it connected', () => {
   const state = { nodes: [{ id: 'first', label: '산책' }], edges: [] };
@@ -34,4 +34,9 @@ test('does not bridge already connected nodes or create a self edge', () => {
   ensureConnected(state);
   assert.equal(state.edges.length,1);
   assert.equal(state.edges[0].weight,0.8);
+});
+
+test('selects the ten most recent thoughts, keeping insertion order as a tie breaker', () => {
+  const nodes = Array.from({ length: 12 }, (_, index) => ({ id: String(index), createdAt: index < 10 ? 100 : 0 }));
+  assert.deepEqual([...recentNodeIds(nodes)], ['9', '8', '7', '6', '5', '4', '3', '2', '1', '0']);
 });

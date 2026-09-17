@@ -12,6 +12,14 @@ export function restoreGraph(saved) {
   return { nodes, edges: saved.edges.filter(e => ids.has(idOf(e.source)) && ids.has(idOf(e.target))) };
 }
 
+export function recentNodeIds(nodes, limit = 10) {
+  return new Set(nodes
+    .map((node, index) => ({ id: node.id, index, createdAt: Number(node.createdAt) || 0 }))
+    .sort((a, b) => b.createdAt - a.createdAt || b.index - a.index)
+    .slice(0, limit)
+    .map(node => node.id));
+}
+
 const idOf = node => typeof node === 'object' ? node.id : node;
 
 // Add only the bridges needed to join disconnected components. These are not similarity scores.
