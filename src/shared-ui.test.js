@@ -66,11 +66,18 @@ test('two independent screens share additions; only the host can clear; personal
   guest.submit('#join-room-form');
   await until(() => guest.$('#room-role').textContent === '참여자');
   assert.equal(guest.$('#clear').hidden, true);
+  guest.$('[data-sidebar-tab="members"]').click();
+  assert.equal(guest.$('#members-panel').hidden, false);
+  assert.equal(guest.$('#member-list').children.length, 2);
+  assert.equal(guest.$('#member-list .member-role').textContent, '방장');
   guest.$('#thought').value = '함께 남긴 생각';
   guest.submit('#composer');
   await until(() => guest.$('#node-count').textContent === '1개의 생각');
   await until(() => host.$('#node-count').textContent === '1개의 생각');
   assert.equal(host.$('#graph .node text').textContent, '함께 남긴 생각');
+  assert.equal(host.$('#node-list .list-dot').style.background, 'rgb(31, 138, 101)');
+  host.$('#graph .node').dispatchEvent(new host.w.MouseEvent('click', { bubbles: true }));
+  assert.equal(host.$('.author-chip').textContent.trim(), '참여자');
   assert.equal(host.$('#clear').hidden, false);
   host.$('#clear').click();
   assert.equal(host.$('#clear-dialog').open, true);

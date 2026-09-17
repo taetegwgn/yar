@@ -8,6 +8,7 @@ class HttpError extends Error {
 const fail = (status, message) => { throw new HttpError(status, message); };
 const digest = token => createHash('sha256').update(token).digest('hex');
 const secret = () => randomBytes(32).toString('base64url');
+const MEMBER_COLORS = ['#f54e00', '#1f8a65', '#5372b8', '#875eb5', '#a87520', '#bf4b67', '#217d82', '#7e6c44'];
 const validId = id => typeof id === 'string' && /^[a-f0-9-]{36}$/.test(id);
 const text = (value, max, name) => {
   if (typeof value !== 'string' || !value.trim() || value.trim().length > max) fail(400, `${name}을 확인해 주세요 (최대 ${max}자).`);
@@ -27,9 +28,16 @@ function requireHost(member) {
   if (member.role !== 'host') fail(403, '전체 삭제는 방장만 할 수 있습니다.');
 }
 function publicRoom(room, member, aiEnabled) {
+  const members = room.members.map((item, index) => ({
+    id: item.id,
+    name: item.name,
+    role: item.role,
+    color: item.color || MEMBER_COLORS[index % MEMBER_COLORS.length],
+    nodeCount: room.nodes.filter(node => node.authorId === item.id).length
+  }));
   return {
     id: room.id, name: room.name, revision: room.revision, generation: room.generation,
-    memberCount: room.members.length, me: { id: member.id, name: member.name, role: member.role },
+    memberCount: room.members.length, members, me: { id: member.id, name: member.name, role: member.role },
     aiEnabled, nodes: room.nodes.map(({ analysisId, analysisStarted, ...n }) => n), edges: room.edges
   };
 }
@@ -73,7 +81,7 @@ export function createRoomHandler(store, { apiKey = '', analyze = getConnections
       }
       if (!id && method === 'POST') {
         const token = secret();
-        const host = { id: randomUUID(), name: text(body.nickname, 30, '닉네임'), role: 'host', tokenHash: digest(token) };
+        const host = { id: randomUUID(), name: text(body.nickname, 30, '닉네임'), role: 'host', color: MEMBER_COLORS[0], tokenHash: digest(token) };
         const room = { id: randomUUID(), name: text(body.name, 60, '방 이름'), revision: 1, generation: 0, members: [host], nodes: [], edges: [], updatedAt: now() };
         if (!await store.put(room.id, room, null)) fail(409, '방 생성에 실패했습니다. 다시 시도해 주세요.');
         return json({ token, room: publicRoom(room, host, !!apiKey) }, 201);
@@ -84,6 +92,7 @@ export function createRoomHandler(store, { apiKey = '', analyze = getConnections
         const guest = { id: randomUUID(), name: text(body.nickname, 30, '닉네임'), role: 'guest', tokenHash: digest(token) };
         const room = await mutate(id, r => {
           if (r.members.length >= 100) fail(409, '이 방의 참여 한도에 도달했습니다.');
+          guest.color = MEMBER_COLORS[r.members.length % MEMBER_COLORS.length];
           r.members.push(guest);
         });
         return json({ token, room: publicRoom(room, guest, !!apiKey) }, 201);

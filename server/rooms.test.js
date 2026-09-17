@@ -44,7 +44,9 @@ test('guest role is server-assigned; no host secrets leak in room snapshots', as
   assert.equal(snapshot.status, 200);
   assert.equal(snapshot.room.memberCount, 2);
   assert.ok(!JSON.stringify(snapshot).includes('tokenHash'));
-  assert.equal(snapshot.room.members, undefined);
+  assert.equal(snapshot.room.members.length, 2);
+  assert.deepEqual(snapshot.room.members.map(member => [member.name, member.role, member.color, member.nodeCount]), [['방장', 'host', '#f54e00', 0], ['참여자', 'guest', '#1f8a65', 0]]);
+  assert.ok(!JSON.stringify(snapshot.room.members).includes('tokenHash'));
   assert.equal((await request(path)).status, 401);
   assert.equal((await request(path, { token: 'x'.repeat(43) })).status, 401);
 });
