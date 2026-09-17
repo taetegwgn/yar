@@ -12,3 +12,9 @@
 @media(max-width:640px){.sidebar-tabs button{padding:0 6px}.member-item{padding-left:12px;padding-right:12px}}
 @media(max-width:380px){.brand>span{font-size:20px}.brand{gap:6px}.header-right{gap:0}.header-right .icon-btn{width:32px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;scroll-behavior:auto!important}}
+
+/* Participant colors are carried by the graph node, including its pop animation. */
+.node .core{fill:var(--node-color,var(--ink))}
+.node .halo{fill:var(--node-color,var(--ink));opacity:.065}
+.node.selected .core{fill:var(--node-color,var(--ink))!important;stroke:var(--ink);stroke-width:2.5px}
+.node.selected .halo{opacity:.14}

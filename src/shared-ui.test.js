@@ -75,7 +75,8 @@ test('two independent screens share additions; only the host can clear; personal
   await until(() => guest.$('#node-count').textContent === '1개의 생각');
   await until(() => host.$('#node-count').textContent === '1개의 생각');
   assert.equal(host.$('#graph .node text').textContent, '함께 남긴 생각');
-  assert.equal(host.$('#node-list .list-dot').style.background, 'rgb(31, 138, 101)');
+  assert.equal(host.$('#node-list .list-dot').style.background, 'rgb(20, 125, 255)');
+  assert.equal(host.$('#graph .node').style.getPropertyValue('--node-color'), '#147dff');
   host.$('#graph .node').dispatchEvent(new host.w.MouseEvent('click', { bubbles: true }));
   assert.equal(host.$('.author-chip').textContent.trim(), '참여자');
   assert.equal(host.$('#clear').hidden, false);

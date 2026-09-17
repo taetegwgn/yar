@@ -8,7 +8,7 @@ class HttpError extends Error {
 const fail = (status, message) => { throw new HttpError(status, message); };
 const digest = token => createHash('sha256').update(token).digest('hex');
 const secret = () => randomBytes(32).toString('base64url');
-const MEMBER_COLORS = ['#f54e00', '#1f8a65', '#5372b8', '#875eb5', '#a87520', '#bf4b67', '#217d82', '#7e6c44'];
+const MEMBER_COLORS = ['#ff3b30', '#147dff', '#d000ff', '#00b86b', '#ff8a00', '#00a8b5', '#9c4dff', '#b58a00'];
 const validId = id => typeof id === 'string' && /^[a-f0-9-]{36}$/.test(id);
 const text = (value, max, name) => {
   if (typeof value !== 'string' || !value.trim() || value.trim().length > max) fail(400, `${name}을 확인해 주세요 (최대 ${max}자).`);
@@ -32,7 +32,7 @@ function publicRoom(room, member, aiEnabled) {
     id: item.id,
     name: item.name,
     role: item.role,
-    color: item.color || MEMBER_COLORS[index % MEMBER_COLORS.length],
+    color: MEMBER_COLORS[index % MEMBER_COLORS.length],
     nodeCount: room.nodes.filter(node => node.authorId === item.id).length
   }));
   return {
