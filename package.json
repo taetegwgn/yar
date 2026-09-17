@@ -1,0 +1,1 @@
+{"name":"ieum-graph","version":"1.0.0","private":true,"type":"module","scripts":{"dev":"vite --host 0.0.0.0","build":"vite build","preview":"vite preview --host 0.0.0.0","test":"node --test"},"dependencies":{"@netlify/blobs":"^11.1.0","d3":"^7.9.0","lucide":"^0.468.0"},"devDependencies":{"jsdom":"^30.0.1","vite":"^6.1.0"}}
