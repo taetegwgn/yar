@@ -78,6 +78,7 @@ test('two independent screens share additions; only the host can clear; personal
   assert.equal(host.$('#graph .node').classList.contains('recent'), true);
   assert.equal(host.$('#node-list .list-dot').style.background, 'rgb(20, 125, 255)');
   assert.equal(host.$('#graph .node').style.getPropertyValue('--node-color'), '#147dff');
+  assert.equal(guest.$('#member-list .member-item:last-child small').textContent, '0');
   guest.$('#member-list .member-item:last-child').click();
   assert.equal(guest.$('#thoughts-panel').hidden, false);
   assert.equal(guest.$('#node-filter').hidden, false);
